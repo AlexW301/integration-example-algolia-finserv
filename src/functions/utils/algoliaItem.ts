@@ -5,6 +5,7 @@ export type AlgoliaItem = Readonly<{
   objectID: string;
   codename: string;
   name: string;
+  elements: Object;
   language: string;
   type: string;
   slug: string;
@@ -35,6 +36,7 @@ export const convertToAlgoliaItem =
     codename: item.system.codename,
     collection: item.system.collection,
     name: item.system.name,
+    elements: item.elements,
     language: item.system.language,
     objectID: createObjectId(item.system.codename, item.system.language),
     slug: Object.values(item.elements).find(el => el.type === ElementType.UrlSlug)?.value ?? "",

@@ -125,7 +125,7 @@ const findDeliverItemWithChildrenByCodename = async (
       .depthParameter(100)
       .toPromise();
 
-    return new Map([response.data, ...Object.values(response.data.linkedItems)].map(i => [i.system.codename, i]));
+    return new Map([response.data.item, ...Object.values(response.data.linkedItems)].map(i => [i.system.codename, i]));
   } catch {
     return new Map();
   }
