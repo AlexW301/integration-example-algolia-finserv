@@ -9,6 +9,8 @@ export type AlgoliaItem = Readonly<{
   language: string;
   type: string;
   slug: string;
+  investmentType: string;
+  symbol: string;
   collection: string;
   content: readonly ContentBlock[];
 }>;
@@ -37,6 +39,8 @@ export const convertToAlgoliaItem =
     collection: item.system.collection,
     name: item.system.name,
     elements: item.elements,
+    investmentType: item.elements.type.value[0].name,
+    symbol: item.elements.symbol.value,
     language: item.system.language,
     objectID: createObjectId(item.system.codename, item.system.language),
     slug: Object.values(item.elements).find(el => el.type === ElementType.UrlSlug)?.value ?? "",
