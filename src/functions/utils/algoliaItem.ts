@@ -6,6 +6,7 @@ export type AlgoliaItem = Readonly<{
   codename: string;
   name: string;
   elements: Object;
+  managers: string;
   language: string;
   type: string;
   slug: string;
@@ -26,6 +27,15 @@ type ContentBlock = Readonly<{
   contents: string;
 }>;
 
+// My Types
+interface Manager {
+  elements: {
+    full_name: {
+      value: string;
+    };
+  };
+}
+
 export const canConvertToAlgoliaItem = (expectedSlug: string) => (item: IContentItem): boolean =>
   !!item.elements[expectedSlug];
 
@@ -39,6 +49,7 @@ export const convertToAlgoliaItem =
     collection: item.system.collection,
     name: item.system.name,
     elements: item.elements,
+    managers: item.elements.managers.linkedItems.map((manager: Manager, index: number) => `${manager.elements.full_name.value}${index < item.elements.managers.linkedItems.length - 1 ? ", " : ""}`),
     investmentType: item.elements.type.value[0].name,
     symbol: item.elements.symbol.value,
     language: item.system.language,
