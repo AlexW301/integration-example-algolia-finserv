@@ -36,23 +36,25 @@ interface Manager {
   };
 }
 
+interface IExtendedContentItem extends IContentItem {
+  linkedItems: Manager[]; // Assuming Manager is another interface or type
+}
+
+
 export const canConvertToAlgoliaItem = (expectedSlug: string) => (item: IContentItem): boolean =>
   !!item.elements[expectedSlug];
 
 const createObjectId = (itemCodename: string, languageCodename: string) => `${itemCodename}_${languageCodename}`;
 
 export const convertToAlgoliaItem =
-  (allItems: ReadonlyMap<string, IContentItem>, expectedSlug: string) => (item: IContentItem): AlgoliaItem => ({
+  (allItems: ReadonlyMap<string, IContentItem>, expectedSlug: string) => (item: IExtendedContentItem | IContentItem): AlgoliaItem => ({
     id: item.system.id,
     type: item.system.type,
     codename: item.system.codename,
     collection: item.system.collection,
     name: item.system.name,
     elements: item.elements,
-    managers: item.elements.managers.linkedItems.map((manager: Manager, index: number) => {
-      let arrayLength = item.elements.managers.linkedItems.length;
-      return (`${manager.elements.full_name.value}${index < arrayLength - 1 ? ", " : ""}`)
-    }),
+    managers: item.elements.managers.linkedItems.map((manager: Manager, index: number) => `${manager.elements.full_name.value}${index < item.elements.managers.linkedItems.length - 1 ? ", " : ""}`),
     investmentType: item.elements.type.value[0].name,
     symbol: item.elements.symbol.value,
     language: item.system.language,
