@@ -6,7 +6,7 @@ export type AlgoliaItem = Readonly<{
   codename: string;
   name: string;
   elements: Object;
-  managers: any;
+  managers: string;
   language: string;
   type: string;
   slug: string;
@@ -49,7 +49,10 @@ export const convertToAlgoliaItem =
     collection: item.system.collection,
     name: item.system.name,
     elements: item.elements,
-    managers: item.elements.managers.linkedItems.map((manager: Manager, index: number) => `${manager.elements.full_name.value}${index < item.elements.managers.linkedItems.length - 1 ? ", " : ""}`),
+    managers: item.elements.managers.linkedItems.map((manager: Manager, index: number) => {
+      let arrayLength = item.elements.managers.linkedItems.length;
+      return `${manager.elements.full_name.value}${index < arrayLength - 1 ? ", " : ""}`
+    }),
     investmentType: item.elements.type.value[0].name,
     symbol: item.elements.symbol.value,
     language: item.system.language,
