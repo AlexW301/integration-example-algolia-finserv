@@ -6,7 +6,7 @@ export type AlgoliaItem = Readonly<{
   codename: string;
   name: string;
   elements: Object;
-  managers: string[];
+  managers: string;
   language: string;
   type: string;
   slug: string;
@@ -36,13 +36,6 @@ interface Manager {
   };
 }
 
-interface ContentItemElementsIndexer {
-  // Define the structure of ContentItemElementsIndexer here
-  linkedItems: Manager[]; // Assuming Manager is the correct type
-  // Other properties...
-}
-
-
 export const canConvertToAlgoliaItem = (expectedSlug: string) => (item: IContentItem): boolean =>
   !!item.elements[expectedSlug];
 
@@ -56,7 +49,7 @@ export const convertToAlgoliaItem =
     collection: item.system.collection,
     name: item.system.name,
     elements: item.elements,
-    managers: ((item.elements.managers as ContentItemElementsIndexer).linkedItems as Manager[]).map((manager: Manager, index: number) => `${manager.elements.full_name.value}${index < item.elements.managers.linkedItems.length - 1 ? ", " : ""}`),
+    managers: item.elements.managers.linkedItems,
     investmentType: item.elements.type.value[0].name,
     symbol: item.elements.symbol.value,
     language: item.system.language,
