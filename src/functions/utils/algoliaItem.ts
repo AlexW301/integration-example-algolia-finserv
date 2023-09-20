@@ -51,7 +51,7 @@ export const convertToAlgoliaItem =
     elements: item.elements,
     managers: item.elements.managers.linkedItems.map((manager: Manager, index: number) => {
       let arrayLength = item.elements.managers.linkedItems.length;
-      return `${manager.elements.full_name.value}${index < arrayLength - 1 ? ", " : ""}`
+      return (`${manager.elements.full_name.value}${index < arrayLength - 1 ? ", " : ""}`)
     }),
     investmentType: item.elements.type.value[0].name,
     symbol: item.elements.symbol.value,
