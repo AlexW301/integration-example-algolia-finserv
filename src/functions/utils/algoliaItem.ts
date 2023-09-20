@@ -6,7 +6,7 @@ export type AlgoliaItem = Readonly<{
   codename: string;
   name: string;
   elements: Object;
-  managers: string;
+  managers: any;
   language: string;
   type: string;
   slug: string;
