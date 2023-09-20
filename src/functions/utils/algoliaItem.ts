@@ -49,7 +49,7 @@ export const convertToAlgoliaItem =
     collection: item.system.collection,
     name: item.system.name,
     elements: item.elements,
-    managers: item.elements.managers.linkedItems,
+    managers: item.elements.managers,
     investmentType: item.elements.type.value[0].name,
     symbol: item.elements.symbol.value,
     language: item.system.language,
