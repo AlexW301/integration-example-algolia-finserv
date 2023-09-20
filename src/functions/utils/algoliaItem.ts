@@ -49,7 +49,7 @@ export const convertToAlgoliaItem =
     collection: item.system.collection,
     name: item.system.name,
     elements: item.elements,
-    managers: item.elements.managers,
+    managers: item.elements.managers.linkedItems.map((manager: Manager, index: number) => `${manager.elements.full_name.value}${index < item.elements.managers.linkedItems.length - 1 ? ", " : ""}`),
     investmentType: item.elements.type.value[0].name,
     symbol: item.elements.symbol.value,
     language: item.system.language,
