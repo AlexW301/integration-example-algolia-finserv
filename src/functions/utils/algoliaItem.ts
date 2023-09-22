@@ -2,6 +2,8 @@ import { Elements, ElementType, IContentItem } from "@kontent-ai/delivery-sdk";
 
 export type AlgoliaItem = Readonly<{
   id: string;
+  categories: string[];
+  hierarchicalCategories: Record<string, string>;
   objectID: string;
   codename: string;
   name: string;
@@ -35,6 +37,28 @@ interface Manager {
   };
 }
 
+// Creates an array from strings
+function createStringArray(...args: string[]): string[] {
+  // Filter out empty strings and return the resulting array
+  return args.filter((str) => str !== "");
+}
+
+// Creates object from array
+function createHierarchicalObject(array: string[]): Record<string, string> {
+  let obj: Record<string, string> = {};
+
+  for (let i = 0; i < array.length; i++) {
+    if (i === 0) {
+      obj[`lvl${i}`] = `${array[i]}`;
+    } else {
+      let parentKey = `lvl${i - 1}`;
+      obj[`lvl${i}`] = `${obj[parentKey]} > ${array[i]}`;
+    }
+  }
+
+  return obj;
+}
+
 export const canConvertToAlgoliaItem = (expectedSlug: string) => (item: IContentItem): boolean =>
   !!item.elements[expectedSlug];
 
@@ -43,6 +67,8 @@ const createObjectId = (itemCodename: string, languageCodename: string) => `${it
 export const convertToAlgoliaItem =
   (allItems: ReadonlyMap<string, IContentItem>, expectedSlug: string) => (item: IContentItem): AlgoliaItem => ({
     id: item.system.id,
+    categories: createStringArray(item.elements.asset_class.value[0].name, item.elements.category.value[0].name),
+    hierarchicalCategories: createHierarchicalObject(createStringArray(item.elements.asset_class.value[0].name, item.elements.category.value[0].name)),
     type: item.system.type,
     codename: item.system.codename,
     collection: item.system.collection,
