@@ -67,8 +67,8 @@ const createObjectId = (itemCodename: string, languageCodename: string) => `${it
 export const convertToAlgoliaItem =
   (allItems: ReadonlyMap<string, IContentItem>, expectedSlug: string) => (item: IContentItem): AlgoliaItem => ({
     id: item.system.id,
-    categories: createStringArray(item.elements.asset_class.value[0].name, item?.elements?.category?.value[0]?.name),
-    hierarchicalCategories: createHierarchicalObject(createStringArray(item.elements.asset_class.value[0].name, item?.elements?.category?.value[0]?.name)),
+    categories: item?.elements?.category?.value[0]?.name ? createStringArray(item.elements.asset_class.value[0].name, item?.elements?.category?.value[0]?.name) : createStringArray(item.elements.asset_class.value[0].name),
+    hierarchicalCategories: item?.elements?.category?.value[0]?.name ? createHierarchicalObject(createStringArray(item.elements.asset_class.value[0].name, item?.elements?.category?.value[0]?.name)) : createHierarchicalObject(createStringArray(item.elements.asset_class.value[0].name)),
     type: item.system.type,
     codename: item.system.codename,
     collection: item.system.collection,
