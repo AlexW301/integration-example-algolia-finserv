@@ -68,7 +68,7 @@ export const convertToAlgoliaItem =
   (allItems: ReadonlyMap<string, IContentItem>, expectedSlug: string) => (item: IContentItem): AlgoliaItem => ({
     id: item.system.id,
     categories: createStringArray(item.elements.asset_class.value[0].name, item.elements.category.value[0].name),
-    hierarchicalCategories: item.elements.category ? createHierarchicalObject(createStringArray(item.elements.asset_class.value[0].name, item.elements.category.value[0].name)) : createHierarchicalObject(createStringArray(item.elements.asset_class.value[0].name)),
+    hierarchicalCategories: item.elements?.category ? createHierarchicalObject(createStringArray(item.elements.asset_class.value[0].name, item.elements.category.value[0].name)) : createHierarchicalObject(createStringArray(item.elements.asset_class.value[0].name)),
     type: item.system.type,
     codename: item.system.codename,
     collection: item.system.collection,
