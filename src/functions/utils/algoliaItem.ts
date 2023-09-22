@@ -67,8 +67,8 @@ const createObjectId = (itemCodename: string, languageCodename: string) => `${it
 export const convertToAlgoliaItem =
   (allItems: ReadonlyMap<string, IContentItem>, expectedSlug: string) => (item: IContentItem): AlgoliaItem => ({
     id: item.system.id,
-    categories: createStringArray(item.elements.asset_class.value[0].name, item.elements.category.value[0].name),
-    hierarchicalCategories: item.elements?.category ? createHierarchicalObject(createStringArray(item.elements.asset_class.value[0].name, item.elements.category.value[0].name)) : createHierarchicalObject(createStringArray(item.elements.asset_class.value[0].name)),
+    categories: createStringArray(item.elements.asset_class.value[0].name, item?.elements?.category?.value[0]?.name),
+    hierarchicalCategories: createHierarchicalObject(createStringArray(item.elements.asset_class.value[0].name, item?.elements?.category?.value[0]?.name)),
     type: item.system.type,
     codename: item.system.codename,
     collection: item.system.collection,
@@ -84,52 +84,52 @@ export const convertToAlgoliaItem =
 
 const createRecordBlock =
   (allItems: ReadonlyMap<string, IContentItem>, parentCodenames: ReadonlyArray<string>, expectedSlug: string) =>
-    (item: IContentItem): ReadonlyArray<ContentBlock> => {
-      const content = Object.values(item.elements)
-        .map(element => {
-          switch (element.type) {
-            case ElementType.Text:
-              return element.value ?? "";
-            case ElementType.RichText: {
-              return element.value?.replace(/<[^>]*>?/gm, "").replace(/&nbsp;/g, " ").replace(/\n/g, " ") ?? "";
-            }
-            default:
-              return "";
+  (item: IContentItem): ReadonlyArray<ContentBlock> => {
+    const content = Object.values(item.elements)
+      .map(element => {
+        switch (element.type) {
+          case ElementType.Text:
+            return element.value ?? "";
+          case ElementType.RichText: {
+            return element.value?.replace(/<[^>]*>?/gm, "").replace(/&nbsp;/g, " ").replace(/\n/g, " ") ?? "";
           }
-        });
+          default:
+            return "";
+        }
+      });
 
-      const children = Object.values(item.elements)
-        .flatMap(element => {
-          switch (element.type) {
-            case ElementType.RichText: {
-              const typedElement = element as Elements.RichTextElement;
-              return typedElement.linkedItems
-                .filter(i => !parentCodenames.includes(i.system.codename))
-                .filter(i => !canConvertToAlgoliaItem(expectedSlug)(i))
-                .flatMap(createRecordBlock(allItems, [item.system.codename, ...parentCodenames], expectedSlug));
-            }
-            case ElementType.ModularContent: {
-              const typedElement = element as Elements.LinkedItemsElement;
-              return typedElement.linkedItems
-                .filter(i => !parentCodenames.includes(i.system.codename))
-                .filter(i => !canConvertToAlgoliaItem(expectedSlug)(i))
-                .flatMap(createRecordBlock(allItems, [item.system.codename, ...parentCodenames], expectedSlug));
-            }
-            default:
-              return [];
+    const children = Object.values(item.elements)
+      .flatMap(element => {
+        switch (element.type) {
+          case ElementType.RichText: {
+            const typedElement = element as Elements.RichTextElement;
+            return typedElement.linkedItems
+              .filter(i => !parentCodenames.includes(i.system.codename))
+              .filter(i => !canConvertToAlgoliaItem(expectedSlug)(i))
+              .flatMap(createRecordBlock(allItems, [item.system.codename, ...parentCodenames], expectedSlug));
           }
-        });
+          case ElementType.ModularContent: {
+            const typedElement = element as Elements.LinkedItemsElement;
+            return typedElement.linkedItems
+              .filter(i => !parentCodenames.includes(i.system.codename))
+              .filter(i => !canConvertToAlgoliaItem(expectedSlug)(i))
+              .flatMap(createRecordBlock(allItems, [item.system.codename, ...parentCodenames], expectedSlug));
+          }
+          default:
+            return [];
+        }
+      });
 
-      const thisBlock: ContentBlock = {
-        id: item.system.id,
-        type: item.system.type,
-        codename: item.system.codename,
-        collection: item.system.collection,
-        name: item.system.name,
-        language: item.system.language,
-        contents: content.join(" ").replace("\"", ""),
-        parents: parentCodenames,
-      };
-
-      return [thisBlock, ...children];
+    const thisBlock: ContentBlock = {
+      id: item.system.id,
+      type: item.system.type,
+      codename: item.system.codename,
+      collection: item.system.collection,
+      name: item.system.name,
+      language: item.system.language,
+      contents: content.join(" ").replace("\"", ""),
+      parents: parentCodenames,
     };
+
+    return [thisBlock, ...children];
+  };
